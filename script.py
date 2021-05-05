@@ -7,15 +7,14 @@ class Parser:
     course_base = "https://course.bazanova-art.ru/course/learn/"
     session = None
 
-    def __init__(self):
-        self.session = self.create_session()
+    def __init__(self, email, password):
+        self.session = self.create_session(email, password)
 
-    def create_session(self):
-        cookies_string = """sj_lang=ru; ai_user=5Yp8g|2021-05-05T10:12:35.823Z; tj=CD44547BBEA6D3BC76D503A1975FD36AA58AF30DAEF3E12CC42AA17B5B57F0BA936987FB530303225A4FEFF4DDD59D7220F59C7AF9A64AEBC29502D8EAE212B4DBA9225C97B17ECF031ED8A7DA9A15437287B1A2257533DD7A4057C794D20139123116D4C65C52B34085392ED3AB75E2FCF4619A80EF247C7CEF3C2821C2CA107DB88EA99875A47D17B98DEB67AF3FD2; ai_session=HWys4|1620231718800|1620233380895.26"""
-        cookies = {k.split('=')[0]: k.split('=')[1] for k in cookies_string.split(';')}
+    def create_session(self, email, password):
         session = requests.Session()
         for k, v in cookies.items():
             session.cookies.set(k, v)
+        session.post(self.course_base + '/login', data={'email': email, 'password': password})
         return session
 
     def download_video(self, article_path):
@@ -51,6 +50,8 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("id", help="Id of course", type=int)
+    parser.add_argument("email", help="Id of course", type=int)
+    parser.add_argument("password", help="Id of course", type=int)
     args = parser.parse_args()
-    parser = Parser()
+    parser = Parser(args.email, args.password)
     parser.download_course(args.id)
