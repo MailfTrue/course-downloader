@@ -4,7 +4,7 @@ import os
 import re
 
 class Parser:
-    course_base = "https://course.bazanova-art.ru/course/learn/"
+    course_base = "https://course.bazanova-art.ru"
     session = None
 
     def __init__(self, email, password):
@@ -12,13 +12,11 @@ class Parser:
 
     def create_session(self, email, password):
         session = requests.Session()
-        session.post(self.course_base + '/login', data={'email': email, 'password': password})
+        r = session.post(self.course_base + '/login', data={'email': email, 'password': password})
         return session
 
     def download_video(self, article_path):
         page = self.session.get(self.course_base + article_path)
-        with open('page.html', 'w+') as f:
-            f.write(page.text)
         if 'iframe' in page.text:
             title = re.search('<h1 class="name">([^<]*)<\/h1>', page.text).groups()[0].strip()
             cdn_root_m3u8_url = page.text.split("<iframe src=\"")[1].split('"')[0]
@@ -39,7 +37,7 @@ class Parser:
             """)
 
     def download_course(self, course_id):
-        page = self.session.get(self.course_base + f"{course_id}")
+        page = self.session.get(self.course_base + f"/course/learn/{course_id}")
         article_ids = list(k for k in re.findall(r"/course/gotostep/\d+\/\d+", page.text))
         with Pool(len(article_ids)) as p:
             p.map(self.download_video, article_ids)
