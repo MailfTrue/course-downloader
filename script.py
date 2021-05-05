@@ -4,6 +4,7 @@ import os
 import re
 
 class Parser:
+    course_base = "https://course.bazanova-art.ru/course/learn/"
     session = None
 
     def __init__(self):
@@ -34,21 +35,21 @@ class Parser:
             if 'videos' not in os.listdir():
                 os.mkdir('videos')
             os.system(f"""
-                ./ffmpeg \\
+                ffmpeg \\
                 -i "{cdn_video_base}{track_names[4]}" \\
                 -i "{cdn_video_base}{track_names[0]}" \\
                 -c:v copy -c:a aac "videos/{title}.mp4"
             """)
 
     def download_course(self, course_id):
-        page = self.session.get(f"https://course.bazanova-art.ru/course/learn/{course_id}")
+        page = self.session.get(f"{course_id}")
         article_ids = list(k for k in re.findall(r"/course/gotostep/\d+\/\d+", page.text))
         with Pool(len(article_ids)) as p:
             p.map(self.download_video, article_ids)
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser("simple_example")
+    parser = argparse.ArgumentParser()
     parser.add_argument("id", help="Id of course", type=int)
     args = parser.parse_args()
     parser = Parser()
