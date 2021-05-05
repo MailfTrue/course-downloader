@@ -12,8 +12,6 @@ class Parser:
 
     def create_session(self, email, password):
         session = requests.Session()
-        for k, v in cookies.items():
-            session.cookies.set(k, v)
         session.post(self.course_base + '/login', data={'email': email, 'password': password})
         return session
 
