@@ -19,7 +19,7 @@ class Parser:
         return session
 
     def download_video(self, article_path):
-        page = self.session.get("https://course.bazanova-art.ru" + article_path)
+        page = self.session.get(self.course_base + article_path)
         with open('page.html', 'w+') as f:
             f.write(page.text)
         if 'iframe' in page.text:
@@ -42,7 +42,7 @@ class Parser:
             """)
 
     def download_course(self, course_id):
-        page = self.session.get(f"{course_id}")
+        page = self.session.get(self.course_base + f"{course_id}")
         article_ids = list(k for k in re.findall(r"/course/gotostep/\d+\/\d+", page.text))
         with Pool(len(article_ids)) as p:
             p.map(self.download_video, article_ids)
