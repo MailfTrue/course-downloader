@@ -50,8 +50,8 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("id", help="Id of course", type=int)
-    parser.add_argument("email", help="Id of course", type=int)
-    parser.add_argument("password", help="Id of course", type=int)
+    parser.add_argument("email", help="Id of course", type=str)
+    parser.add_argument("password", help="Id of course", type=str)
     args = parser.parse_args()
     parser = Parser(args.email, args.password)
     parser.download_course(args.id)
